@@ -19,7 +19,7 @@ todayText = InfoBox()
 
 
 class NameForm(FlaskForm):
-    textArea = TextAreaField('历史上的今天', render_kw={'cols': 30, 'rows': 4},
+    textArea = TextAreaField('原文：', render_kw={'cols': 30, 'rows': 4},
                              validators=[DataRequired()])
     submit = SubmitField('翻译并播放')
 
@@ -55,7 +55,7 @@ def index():
     form.textArea.data = textInbox
     if form.validate_on_submit():
         textInbox = getText(form.textArea.data)
-        flash(todayText.baiduTrans(textInbox))
+        flash('译文：%s' % todayText.baiduTrans(textInbox))
         session['textArea'] = textInbox
         writeDB(textInbox)
         return redirect(url_for('index'))
