@@ -33,7 +33,7 @@ def getText(text):
 
 def writeDB(text):
     mydb.inputHistory.insert_one({
-        'dataTime': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        'dataTime': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())),
         'inputText': text
     })
 
@@ -52,11 +52,13 @@ def internal_server_error(e):
 def index():
     form = NameForm()
     textInbox = getText(session.get('textArea'))
-    form.textArea.data = textInbox
     if form.validate_on_submit():
         textInbox = getText(form.textArea.data)
         flash('译文：%s' % todayText.baiduTrans(textInbox))
         session['textArea'] = textInbox
         writeDB(textInbox)
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, textArea=session.get('textArea'))
+    form.textArea.data = textInbox
+    return render_template('index.html',
+                           form=form,
+                           textArea=session.get('textArea'))
