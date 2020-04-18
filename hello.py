@@ -7,18 +7,22 @@ from wtforms.validators import DataRequired
 from infobox import InfoBox
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'hard to guess stringhard to guess string'
+app.config['SECRET_KEY'] = 'some more hard work to do'
 bootstrap = Bootstrap(app)
 todayText = InfoBox()
-day_history = todayText.dayInHistory
-translate = todayText.baiduTrans
-textInbox = day_history
 
 
 class NameForm(FlaskForm):
     textArea = TextAreaField('历史上的今天', render_kw={'cols': 30, 'rows': 4},
                              validators=[DataRequired()])
     submit = SubmitField('翻译并播放')
+
+
+def getText(text):
+    if not text or text.upper() == 'TODAY':
+        return InfoBox().dayInHistory
+    else:
+        return text
 
 
 @app.errorhandler(404)
@@ -34,11 +38,11 @@ def internal_server_error(e):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = NameForm()
-    global textInbox
+    textInbox = getText(session.get('textArea'))
     if form.validate_on_submit():
-        textInbox = form.textArea.data
-        flash(translate(textInbox))
+        textInbox = getText(form.textArea.data)
+        flash(todayText.baiduTrans(textInbox))
         session['textArea'] = textInbox
         return redirect(url_for('index'))
     form.textArea.data = textInbox
-    return render_template('index.html', form=form, textArea=textInbox)
+    return render_template('index.html', form=form, textArea=session.get('textArea'))
