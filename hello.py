@@ -19,7 +19,7 @@ class NameForm(FlaskForm):
 
 
 def getText(text):
-    if not text or text.upper() == 'TODAY':
+    if not text or text.strip().upper() == 'TODAY':
         return InfoBox().dayInHistory
     else:
         return text
