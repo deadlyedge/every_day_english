@@ -18,7 +18,7 @@ bootstrap = Bootstrap(app)
 todayText = InfoBox()
 
 
-class NameForm(FlaskForm):
+class TextForm(FlaskForm):
     textArea = TextAreaField('原文：', render_kw={'cols': 30, 'rows': 4},
                              validators=[DataRequired()])
     submit = SubmitField('翻译并播放')
@@ -50,7 +50,7 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = NameForm()
+    form = TextForm()
     textInbox = getText(session.get('textArea'))
     if form.validate_on_submit():
         textInbox = getText(form.textArea.data)
